@@ -1,0 +1,9 @@
+{
+  "filename": "reference_dataset_classified.xlsx",
+  "sha256": "8FF5DC830A5A7D59CABC1851E2F2144E0925CFFE62899B153F40BF35481F62DE",
+  "rows": 154599,
+  "columns": ["fname", "mname", "sname", "Tribe"],
+  "source": "LLM-populated Tribe column over the 154,599 rows of archive/tribes.txt",
+  "label_nature": "LLM-derived reference (not ground truth); true accuracy is measured against a separate gold set",
+  "added": "2026-09-06"
+}

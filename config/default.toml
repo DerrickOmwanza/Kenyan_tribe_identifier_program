@@ -1,0 +1,54 @@
+# Default configuration for `kne classify`. All values are overridable; pass an
+# alternative file with --config. Thresholds here are hand-set starting points
+# and are meant to be tuned in Phase 4 against an independent gold set.
+
+smoothing_alpha = 8.0        # Dirichlet concentration; low-support tokens shrink to the global prior
+softmax_temperature = 1.0    # >1 flattens the posterior, <1 sharpens it
+combo_min_support = 3        # ignore name-combination signals below this many corpus observations
+
+[weights]
+evidence = 3.0               # documentary evidence dictionary (approved rows only)
+fname = 0.4
+mname = 0.6
+sname = 1.0                  # surname is the strongest positional signal
+combo = 1.2                  # a matched name combination outweighs a single token
+morph = 0.0                  # morphological-prefix hook; disabled until tuned
+
+[gate]
+tau = 0.75                   # minimum posterior probability for the top tribe
+delta = 0.15                 # minimum margin of the top tribe over the second
+tau_conflict = 0.85          # bar to flag an existing label as a "conflict" (refine mode)
+sparse_tribe_tau = 0.90      # stricter bar for statistically sparse tribes
+generic_dominance = 0.60     # P(meta-labels | surname) above this and no clear pass => status "generic"
+
+[generic_fname]
+min_support = 50             # only judge first names seen at least this often
+max_kl_from_prior = 0.25     # KL(name distribution || population base rate) in bits, below this => non-informative
+
+# Documentary-evidence association name -> verbatim corpus tribe label.
+[tribe_aliases]
+Kikuyu = "Agikuyu (Kikuyu)"
+Luo = "Luo"
+Kamba = "Akamba (Kamba)"
+Luhya = "Abaluhya (Luhya)"
+Kisii = "Abagusii (Kisii)"
+Meru = "Ameru (Meru)"
+Embu = "Aembu / Mbeere (Embu)"
+Kuria = "Abakuria (Kuria)"
+
+# Tribes with thin corpus support: assignable, but must clear sparse_tribe_tau.
+sparse_tribes = [
+    "Abakuria (Kuria)",
+    "Aembu / Mbeere (Embu)",
+    "Maasai",
+    "Samburu",
+    "Taita / Taveta",
+    "Teso",
+    "Turkana",
+]
+
+# Corpus labels that are NOT prediction targets; they map to engine statuses.
+non_target_labels = [
+    "Uncertain / could not confidently place",
+    "Generic / borrowed (Christian, Swahili, or pan-Kenyan)",
+]

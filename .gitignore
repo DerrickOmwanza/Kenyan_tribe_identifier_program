@@ -1,0 +1,21 @@
+.venv/
+**/__pycache__/
+**pycache**/
+*.pyc
+*.egg-info/
+.pytest_cache/
+
+# Local data and generated artifacts (see data/corpus/MANIFEST.json for the expected corpus file)
+data/*
+!data/corpus/
+data/corpus/*
+!data/corpus/MANIFEST.json
+output/
+*.db
+
+# Retired source files, kept locally for audit (see archive/SOURCES.md)
+archive/*.txt
+
+# Legacy staged-pipeline code and generated artifacts, superseded by src/kne/.
+# Kept on disk for audit, not part of the shipped engine.
+archive/legacy/
