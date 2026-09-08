@@ -13,6 +13,7 @@ from .corpus import build as corpus_build
 from .corpus.ingest import IngestError, ingest
 from .corpus.report import generate as corpus_report
 from .corpus.store import connect, get_meta
+from .evaluate import EvaluateError, evaluate
 from .pipeline import ClassifyError, classify_file
 
 
@@ -56,6 +57,25 @@ def _add_classify_command(sub: argparse._SubParsersAction) -> None:
     p.add_argument("--mname-col", default=None, help="override middle-name column")
     p.add_argument("--sname-col", default=None, help="override surname column")
     p.add_argument("--tribe-col", default=None, help="override tribe/ethnicity column")
+
+
+def _add_evaluate_command(sub: argparse._SubParsersAction) -> None:
+    p = sub.add_parser("evaluate", help="score a classify output against a labelled gold set")
+    p.add_argument("predictions", type=Path, help="a file written by `kne classify` (.xlsx/.csv/.tsv)")
+    p.add_argument("--gold", type=Path, required=True,
+                   help="gold CSV with fname,mname,sname,tribe_gold[,tier]")
+    p.add_argument("--out", type=Path, default=paths.OUTPUT_DIR / "eval",
+                   help="directory for the evaluate_*.md / .json report")
+
+
+def _cmd_evaluate(args: argparse.Namespace) -> int:
+    try:
+        summary = evaluate(args.predictions, args.gold, args.out)
+    except EvaluateError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    return 0
 
 
 def _cmd_classify(args: argparse.Namespace) -> int:
@@ -156,6 +176,7 @@ _DISPATCH = {
     ("corpus", "report"): _cmd_corpus_report,
     ("corpus", "status"): _cmd_corpus_status,
     ("classify", None): _cmd_classify,
+    ("evaluate", None): _cmd_evaluate,
 }
 
 
@@ -165,6 +186,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub = parser.add_subparsers(dest="command", required=True)
     _add_corpus_commands(sub)
     _add_classify_command(sub)
+    _add_evaluate_command(sub)
     return parser
 
 

@@ -119,6 +119,20 @@ All tuning knobs live in `config/default.toml` (override with `--config`). The
 shipped thresholds are hand-set starting points, to be tuned against the
 independent gold set.
 
+## Evaluating against a gold set
+
+```bash
+kne evaluate result.xlsx --gold gold.csv
+```
+
+`gold.csv` needs `fname,mname,sname,tribe_gold` and an optional `tier` column.
+`kne evaluate` joins it to a `kne classify` output on the normalised
+`(fname, mname, sname)` triple and writes `output/eval/evaluate_<gold>.md` +
+`.json` with coverage, precision and the abstention breakdown — overall, per
+tier, and per tribe — plus a coverage-at-precision sweep and the top confusions.
+It changes nothing; re-run it after any corpus or config change as a regression
+check.
+
 ## Project rules
 
 Permanent constraints for all work in this repo are in
